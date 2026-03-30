@@ -170,3 +170,41 @@ Ethernet enveloppe IP. IP ne peut pas voyager sans Ethernet en dessous. Et Ether
 
 C'est pour ça qu'ARP existe — c'est le traducteur entre le monde IP et le monde MAC. 🤔
 
+
+
+
+# MAC 
+
+Les 3 premiers octets d'un MAC  = `OUI` : — **Organizationally Unique Identifier** —  identifiant unique organisationnel. Ils identifient le fabricant de la carte réseau.
+
+Exemple:
+```bash 
+00:50:56:c0:00:08
+└─────┘
+  OUI = 00:50:56 = VMware
+```
+Il existe une base de données publique qui fait le lien OUI → fabricant.
+
+
+--- 
+
+### avoir le MAC  manufacturateur
+
+On utilise "manuf" de python 
+
+```bash
+sudo pip install manuf --break-system-packages
+```
+- `--break-system-packages` = bypass la securité Linux qui tend a empecher de changer la version python
+
+Ensuite on crée un objet :
+
+```python
+from manuf import manuf 
+
+mac_parser = manuf.MacParser()
+
+# puis on peut acceder grace a la MAC :
+manufactor = mac_parser.get(MaMacAddresse)
+
+```
