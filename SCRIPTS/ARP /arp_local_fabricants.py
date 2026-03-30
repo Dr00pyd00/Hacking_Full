@@ -16,7 +16,7 @@ plage = parser_args.plage
 broadcast = parser_args.broadcast
 
 # manuf setup:
-p = manuf.MacParser()
+mac_parser = manuf.MacParser()
 
 # running time:
 start = time.perf_counter()
@@ -30,7 +30,7 @@ responses, _ = srp(paquet, timeout=0.1, verbose=False)
 count = 0
 for sended , received in responses:
     count += 1
-    print(f"IP = {received.psrc} || MAC = {received.hwsrc} || manufactor = {p.get_manuf(received.hwsrc)}")
+    print(f"IP = {received.psrc} || MAC = {received.hwsrc} || manufactor = {mac_parser.get_manuf(received.hwsrc)}")
 
 
 end = time.perf_counter()
