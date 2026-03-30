@@ -127,3 +127,46 @@ for sended, received in reponses:
 
 ---
 
+
+
+
+
+
+Ethernet c'est la couche 2 — elle travaille uniquement avec des **adresses MAC**. Elle ne sait pas ce qu'est une IP.
+
+Quand tu envoies un paquet sur ton réseau local, physiquement ce qui voyage sur le câble (ou le WiFi) c'est un **frame Ethernet** — et ce frame contient une MAC source et une MAC destination. Pas d'IP.
+
+---
+
+**Alors comment les IP et les MAC fonctionnent ensemble ?**
+
+C'est exactement le rôle d'ARP —
+
+> "J'ai une IP à contacter — mais j'ai besoin de sa MAC pour envoyer le frame Ethernet."
+
+Le processus complet quand tu veux contacter `192.168.1.5` :
+
+```
+1. Ton OS regarde sa table ARP — est-ce que j'ai déjà la MAC de 192.168.1.5 ?
+2. Non → envoie un ARP broadcast : "qui a 192.168.1.5 ?"
+3. La machine répond : "c'est moi, ma MAC est aa:bb:cc:dd:ee:ff"
+4. Maintenant ton OS peut construire le frame Ethernet avec cette MAC
+5. Le paquet IP voyage dans le frame Ethernet
+```
+
+---
+
+**Résumé visuel**
+
+```
+[ Frame Ethernet        ]
+  MAC src → MAC dst
+  [ Paquet IP           ]
+    IP src → IP dst
+    [ Données TCP/UDP   ]
+```
+
+Ethernet enveloppe IP. IP ne peut pas voyager sans Ethernet en dessous. Et Ethernet ne parle que MAC.
+
+C'est pour ça qu'ARP existe — c'est le traducteur entre le monde IP et le monde MAC. 🤔
+
