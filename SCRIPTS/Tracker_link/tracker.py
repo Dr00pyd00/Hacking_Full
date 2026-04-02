@@ -10,7 +10,7 @@ class MonHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(b'{"message":"SALUT GROS DEBILE"}')
+            self.wfile.write(b'{"message":"I got your data!"}')
 
         else:
             self.send_response(404)
