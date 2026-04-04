@@ -104,4 +104,22 @@ smbclient -L 192.168.78.129 -N
 # smb.conf => configuration de ce que l'on veut exposer
 ```
 
+### Mettre en partgae un dossier via samba
+
+Il faut aller dans **/etc/samba/smb.conf** et ajouter un block.
+
+
+```
+[nom_du_partage]
+   path = /chemin/vers/dossier
+   browseable = yes
+   guest ok = yes
+   read only = no
+```
+
+- `[nom_du_partage]` — le nom qui apparaît dans `smbclient -L`
+- `path` — le vrai chemin sur le disque
+- `browseable` — visible dans la liste ou non
+- `guest ok` — accessible sans mot de passe
+- `read only` — lecture seule ou écriture autorisée
 

@@ -12,8 +12,7 @@ Ici on met 2 flags:
 
 ```bash
 # ssh -o OPTION=VALEUR
-
-ssh -o HostKeyAlgorithms=+ssh-rsa  -o PubkeyAcceptAlgorithms=+ssh-rsa msfadmin@192.168.78.129
+└─$ ssh -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa msfadmin@192.168.78.129
 
 ```
 
