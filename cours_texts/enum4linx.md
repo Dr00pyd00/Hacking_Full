@@ -912,3 +912,13 @@ Tout ça avec une seule commande. 😄
 
 
 
+
+# proteger samba: 
+
+dans /etc/samba/smb.conf :
+
+```bash
+map to guest = never
+restrict anonymous = 2
+usershare allow guests = no
+```
