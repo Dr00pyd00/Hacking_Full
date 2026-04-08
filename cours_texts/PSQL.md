@@ -125,3 +125,22 @@ SELECT * FROM users;        -- contenu
 SELECT usename, passwd FROM pg_shadow;  -- hashes des users PostgreSQL
 \q                          -- quitter
 ```
+
+
+
+
+# psql — commandes alternatives pour vieux serveurs
+
+> Quand le client psql moderne est incompatible avec une vieille version PostgreSQL,
+> utilise ces requêtes SQL directes à la place des commandes `\`.
+
+---
+
+| commande normale | alternative SQL compatible |
+|-----------------|---------------------------|
+| `\l` | `SELECT datname FROM pg_database;` |
+| `\dt` | `SELECT tablename FROM pg_tables WHERE schemaname='public';` |
+| `\d table` | `SELECT column_name, data_type FROM information_schema.columns WHERE table_name='table';` |
+| `\du` | `SELECT usename FROM pg_user;` |
+| `\dn` | `SELECT nspname FROM pg_namespace;` |
+| `\c base` | se reconnecter avec `psql ... -d base` depuis le shell |
