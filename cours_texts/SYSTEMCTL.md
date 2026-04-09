@@ -144,3 +144,76 @@ sudo service ssh status           # équivalent de systemctl status ssh
 ```
 
 Compatible avec les vieux scripts et les systèmes sans systemd.
+
+
+
+
+# service — commandes de base
+
+> `service` est l'ancien système de gestion des services sur Linux.
+> Utilisé sur les vieilles distros (Ubuntu < 15, Debian < 8, Metasploitable...).
+> Les distros modernes utilisent `systemctl` à la place.
+
+---
+
+## Commandes de base
+
+```bash
+sudo service nom status     # affiche l'état du service
+sudo service nom start      # démarre le service
+sudo service nom stop       # arrête le service
+sudo service nom restart    # redémarre le service
+sudo service nom reload     # recharge la config sans redémarrer
+```
+
+---
+
+## Exemples concrets
+
+```bash
+sudo service vsftpd status
+sudo service vsftpd start
+sudo service apache2 restart
+sudo service ssh stop
+sudo service samba restart
+```
+
+---
+
+## service vs systemctl
+
+| `service` | `systemctl` |
+|---|---|
+| vieilles distros | distros modernes |
+| `service nom start` | `systemctl start nom` |
+| `service nom stop` | `systemctl stop nom` |
+| `service nom status` | `systemctl status nom` |
+| `service nom restart` | `systemctl restart nom` |
+
+Sur les distros modernes `service` existe encore mais redirige vers `systemctl` automatiquement.
+
+---
+
+## Lister les services qui tournent
+
+```bash
+# vieilles distros
+service --status-all
+
+# distros modernes
+systemctl list-units --type=service --state=running
+```
+
+---
+
+## Activer/désactiver au démarrage
+
+```bash
+# vieilles distros
+update-rc.d nom enable    # démarre automatiquement au boot
+update-rc.d nom disable   # ne démarre plus au boot
+
+# distros modernes
+systemctl enable nom
+systemctl disable nom
+```
